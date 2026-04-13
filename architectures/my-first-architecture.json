@@ -1,0 +1,94 @@
+{
+    "$schema": "https://calm.finos.org/release/1.2/meta/calm.json",
+    "unique-id": "payment-processing-system",
+    "name": "Payment Processing System",
+    "description": "Core architecture for processing credit card transactions, including authorisation, settlement, and fraud detection",
+    "metadata": {
+        "owner": "Payments Engineering",
+        "version": "1.0.0",
+        "created": "2026-04-12",
+        "description": "Learning architecture demonstrating a credit card payment processing system with a customer actor, REST API service, and PostgreSQL database",
+        "tags": ["learning", "payments", "demo"]
+    },
+    "nodes": [
+        {
+            "unique-id": "customer",
+            "node-type": "actor",
+            "name": "Customer",
+            "description": "End user or customer who initiates credit card payment transactions through the payment service"
+        },
+        {
+            "unique-id": "credit-card-payment-service",
+            "node-type": "service",
+            "name": "Credit Card Payment Service",
+            "description": "Handles end-to-end credit card transaction processing including authorisation, capture, and settlement against downstream card networks",
+            "interfaces": [
+                {
+                    "unique-id": "payment-api-endpoint",
+                    "protocol": "HTTPS",
+                    "host": "api.example.com",
+                    "port": 443,
+                    "path": "/api/v1"
+                }
+            ],
+            "metadata": {
+                "tech-owner": "Payments Engineering",
+                "repository": "https://github.com/example-org/credit-card-payment-service",
+                "deployment-type": "container",
+                "sla-tier": "tier-1"
+            }
+        },
+        {
+            "unique-id": "payment-transactions-db",
+            "node-type": "database",
+            "name": "Payment Transactions Database",
+            "description": "Persistent store for credit card transaction records, authorisation history, and settlement data",
+            "interfaces": [
+                {
+                    "unique-id": "payment-db-connection",
+                    "protocol": "JDBC",
+                    "host": "db.example.com",
+                    "port": 5432,
+                    "database": "payment_transactions"
+                }
+            ]
+        }
+    ],
+    "relationships": [
+        {
+            "unique-id": "customer-uses-payment-service",
+            "description": "Submits credit card payment requests to",
+            "relationship-type": {
+
+
+
+                "interacts": {
+                    "actor": "customer",
+                    "nodes": ["credit-card-payment-service"]
+                }
+            }
+        },
+        {
+            "unique-id": "payment-service-to-db",
+            "description": "Reads and writes transaction records to",
+            "relationship-type": {
+                "connects": {
+                    "source": {
+                        "node": "credit-card-payment-service",
+                        "interfaces": ["payment-api-endpoint"]
+                    },
+                    "destination": {
+                        "node": "payment-transactions-db",
+                        "interfaces": ["payment-db-connection"]
+                    }
+                }
+            },
+            "protocol": "JDBC",
+            "metadata": {
+                "latency-sla": "< 100ms",
+                "monitoring": true,
+                "circuit-breaker": true
+            }
+        }
+    ]
+}

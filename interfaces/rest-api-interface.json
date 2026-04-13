@@ -1,0 +1,36 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://calm.example.com/interfaces/rest-api-interface.json",
+    "title": "REST API Interface",
+    "description": "Standard interface definition for RESTful HTTP/HTTPS APIs",
+    "type": "object",
+    "properties": {
+        "host": {
+            "type": "string",
+            "description": "Hostname or IP address of the REST API endpoint"
+        },
+        "port": {
+            "type": "number",
+            "description": "TCP port number the API listens on"
+        },
+        "basePath": {
+            "type": "string",
+            "description": "Base path prefix for all API routes (e.g. /api/v1)"
+        },
+        "authentication": {
+            "type": "string",
+            "description": "Authentication mechanism required to access the API",
+            "enum": ["OAuth2", "API-Key", "None"]
+        },
+        "description": {
+            "type": "string",
+            "description": "Human-readable description of the API"
+        },
+        "version": {
+            "type": "string",
+            "description": "Semantic version of the API (e.g. 1.0.0)"
+        }
+    },
+    "required": ["host", "port", "basePath", "authentication"],
+    "additionalProperties": false
+}
