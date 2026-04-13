@@ -140,13 +140,13 @@
             "description": "Internal platform administrator who manages inventory, reviews orders, and configures platform settings"
         },
         {
-            "unique-id": "api-gateway",
+            "unique-id": "load-balancer",
             "node-type": "service",
-            "name": "API Gateway",
-            "description": "Single entry point for all client requests; handles routing, authentication, rate limiting, and load balancing across downstream services",
+            "name": "Load Balancer",
+            "description": "Public-facing entry point that distributes incoming HTTPS traffic across API Gateway instances for high availability",
             "interfaces": [
                 {
-                    "unique-id": "api-gateway-https",
+                    "unique-id": "load-balancer-https",
                     "protocol": "HTTPS",
                     "host": "api.ecommerce.example.com",
                     "port": 443,
@@ -155,9 +155,75 @@
             ],
             "metadata": {
                 "owner": "platform-team@example.com",
+                "deployment-type": "managed",
+                "sla-tier": "tier-1",
+                "high-availability": true,
+                "health-check-interval-seconds": 10,
+                "algorithm": "round-robin"
+            }
+        },
+        {
+            "unique-id": "api-gateway-1",
+            "node-type": "service",
+            "name": "API Gateway Instance 1",
+            "description": "First API Gateway instance; handles routing, authentication, rate limiting, and load balancing across downstream services",
+            "interfaces": [
+                {
+                    "unique-id": "api-gateway-1-https",
+                    "protocol": "HTTPS",
+                    "host": "api-gateway-1.internal",
+                    "port": 443,
+                    "path": "/api/v1"
+                }
+            ],
+            "metadata": {
+                "owner": "platform-team@example.com",
                 "repository": "https://github.com/example-org/api-gateway",
                 "deployment-type": "container",
-                "sla-tier": "tier-1"
+                "sla-tier": "tier-1",
+                "high-availability": true,
+                "ha-role": "primary"
+            },
+            "controls": {
+                "performance": {
+                    "description": "API Gateway rate limiting and caching requirements",
+                    "requirements": [
+                        {
+                            "requirement-url": "https://internal-policy.example.com/performance/rate-limiting",
+                            "config-url": "https://configs.example.com/gateway/rate-limits.yaml"
+                        },
+                        {
+                            "requirement-url": "https://internal-policy.example.com/performance/caching-policy",
+                            "config": {
+                                "default-ttl-seconds": 300,
+                                "cache-control": "private"
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "unique-id": "api-gateway-2",
+            "node-type": "service",
+            "name": "API Gateway Instance 2",
+            "description": "Second API Gateway instance; handles routing, authentication, rate limiting, and load balancing across downstream services",
+            "interfaces": [
+                {
+                    "unique-id": "api-gateway-2-https",
+                    "protocol": "HTTPS",
+                    "host": "api-gateway-2.internal",
+                    "port": 443,
+                    "path": "/api/v1"
+                }
+            ],
+            "metadata": {
+                "owner": "platform-team@example.com",
+                "repository": "https://github.com/example-org/api-gateway",
+                "deployment-type": "container",
+                "sla-tier": "tier-1",
+                "high-availability": true,
+                "ha-role": "secondary"
             },
             "controls": {
                 "performance": {
@@ -253,15 +319,15 @@
             }
         },
         {
-            "unique-id": "order-database",
+            "unique-id": "order-database-primary",
             "node-type": "database",
-            "name": "Order Database",
-            "description": "Primary relational store for order records, order line items, and order status history",
+            "name": "Order Database Primary",
+            "description": "Primary write node for order records, order line items, and order status history; replicates asynchronously to the read replica",
             "interfaces": [
                 {
-                    "unique-id": "order-db-connection",
+                    "unique-id": "order-db-primary-connection",
                     "protocol": "JDBC",
-                    "host": "order-db.internal",
+                    "host": "order-db-primary.internal",
                     "port": 5432,
                     "database": "orders"
                 }
@@ -270,7 +336,46 @@
                 "owner": "platform-team@example.com",
                 "repository": "https://github.com/example-org/order-service",
                 "deployment-type": "managed",
-                "engine": "PostgreSQL 15"
+                "engine": "PostgreSQL 15",
+                "db-role": "primary",
+                "replication-mode": "async"
+            }
+        },
+        {
+            "unique-id": "order-database-replica",
+            "node-type": "database",
+            "name": "Order Database Replica",
+            "description": "Asynchronous read replica of the Order Database Primary; serves read-only queries to offload the primary and provides failover capability",
+            "interfaces": [
+                {
+                    "unique-id": "order-db-replica-connection",
+                    "protocol": "JDBC",
+                    "host": "order-db-replica.internal",
+                    "port": 5432,
+                    "database": "orders"
+                }
+            ],
+            "metadata": {
+                "owner": "platform-team@example.com",
+                "repository": "https://github.com/example-org/order-service",
+                "deployment-type": "managed",
+                "engine": "PostgreSQL 15",
+                "db-role": "replica",
+                "replication-mode": "async",
+                "replication-source": "order-database-primary"
+            }
+        },
+        {
+            "unique-id": "order-database-cluster",
+            "node-type": "system",
+            "name": "Order Database Cluster",
+            "description": "High-availability PostgreSQL cluster comprising the primary write node and an asynchronous read replica for the order data domain",
+            "metadata": {
+                "owner": "platform-team@example.com",
+                "deployment-type": "managed",
+                "engine": "PostgreSQL 15",
+                "high-availability": true,
+                "replication-mode": "async"
             }
         },
         {
@@ -314,7 +419,7 @@
             "relationship-type": {
                 "interacts": {
                     "actor": "customer",
-                    "nodes": ["api-gateway"]
+                    "nodes": ["load-balancer"]
                 }
             }
         },
@@ -324,7 +429,7 @@
             "relationship-type": {
                 "interacts": {
                     "actor": "admin",
-                    "nodes": ["api-gateway"]
+                    "nodes": ["load-balancer"]
                 }
             }
         },
@@ -334,8 +439,8 @@
             "relationship-type": {
                 "connects": {
                     "source": {
-                        "node": "api-gateway",
-                        "interfaces": ["api-gateway-https"]
+                        "node": "api-gateway-1",
+                        "interfaces": ["api-gateway-1-https"]
                     },
                     "destination": {
                         "node": "order-service",
@@ -355,8 +460,8 @@
             "relationship-type": {
                 "connects": {
                     "source": {
-                        "node": "api-gateway",
-                        "interfaces": ["api-gateway-https"]
+                        "node": "api-gateway-1",
+                        "interfaces": ["api-gateway-1-https"]
                     },
                     "destination": {
                         "node": "inventory-service",
@@ -394,7 +499,7 @@
         },
         {
             "unique-id": "order-service-to-order-db",
-            "description": "Reads and writes order records to",
+            "description": "Writes order records to",
             "relationship-type": {
                 "connects": {
                     "source": {
@@ -402,8 +507,8 @@
                         "interfaces": ["order-service-http"]
                     },
                     "destination": {
-                        "node": "order-database",
-                        "interfaces": ["order-db-connection"]
+                        "node": "order-database-primary",
+                        "interfaces": ["order-db-primary-connection"]
                     }
                 }
             },
@@ -411,7 +516,31 @@
             "metadata": {
                 "latency-sla": "< 100ms p99",
                 "monitoring": true,
-                "circuit-breaker": true
+                "circuit-breaker": true,
+                "operation": "write"
+            }
+        },
+        {
+            "unique-id": "order-service-to-order-db-replica",
+            "description": "Reads order status and history from",
+            "relationship-type": {
+                "connects": {
+                    "source": {
+                        "node": "order-service",
+                        "interfaces": ["order-service-http"]
+                    },
+                    "destination": {
+                        "node": "order-database-replica",
+                        "interfaces": ["order-db-replica-connection"]
+                    }
+                }
+            },
+            "protocol": "JDBC",
+            "metadata": {
+                "latency-sla": "< 100ms p99",
+                "monitoring": true,
+                "circuit-breaker": true,
+                "operation": "read"
             }
         },
         {
@@ -436,17 +565,74 @@
             }
         },
         {
+            "unique-id": "load-balancer-to-api-gateway-1",
+            "description": "Distributes incoming requests to",
+            "relationship-type": {
+                "connects": {
+                    "source": {
+                        "node": "load-balancer",
+                        "interfaces": ["load-balancer-https"]
+                    },
+                    "destination": {
+                        "node": "api-gateway-1",
+                        "interfaces": ["api-gateway-1-https"]
+                    }
+                }
+            },
+            "protocol": "HTTPS",
+            "metadata": {
+                "high-availability": true,
+                "monitoring": true
+            }
+        },
+        {
+            "unique-id": "load-balancer-to-api-gateway-2",
+            "description": "Distributes incoming requests to",
+            "relationship-type": {
+                "connects": {
+                    "source": {
+                        "node": "load-balancer",
+                        "interfaces": ["load-balancer-https"]
+                    },
+                    "destination": {
+                        "node": "api-gateway-2",
+                        "interfaces": ["api-gateway-2-https"]
+                    }
+                }
+            },
+            "protocol": "HTTPS",
+            "metadata": {
+                "high-availability": true,
+                "monitoring": true
+            }
+        },
+        {
+            "unique-id": "order-database-cluster-composed-of",
+            "description": "Composed of the primary and replica nodes that together form the high-availability order database cluster",
+            "relationship-type": {
+                "composed-of": {
+                    "container": "order-database-cluster",
+                    "nodes": [
+                        "order-database-primary",
+                        "order-database-replica"
+                    ]
+                }
+            }
+        },
+        {
             "unique-id": "ecommerce-platform-composed-of-services",
             "description": "Composed of all services and data stores that deliver order processing",
             "relationship-type": {
                 "composed-of": {
                     "container": "ecommerce-platform",
                     "nodes": [
-                        "api-gateway",
+                        "load-balancer",
+                        "api-gateway-1",
+                        "api-gateway-2",
                         "order-service",
                         "inventory-service",
                         "payment-service",
-                        "order-database",
+                        "order-database-cluster",
                         "inventory-database"
                     ]
                 }
