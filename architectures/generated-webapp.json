@@ -4,13 +4,19 @@
       "unique-id": "web-frontend",
       "node-type": "webclient",
       "name": "Web Frontend",
-      "description": "Browser-based user interface that serves the application to end users and communicates with the API service over HTTPS"
+      "description": "Browser-based user interface that serves the application to end users and communicates with the API service over HTTPS",
+      "costCenter": "CC-1001",
+      "owner": "frontend-team",
+      "environment": "production"
     },
     {
       "unique-id": "api-service",
       "node-type": "service",
       "name": "API Service",
       "description": "Backend REST API that handles business logic, processes requests from the web frontend, and reads from and writes to the application database",
+      "costCenter": "CC-2001",
+      "owner": "backend-team",
+      "environment": "production",
       "interfaces": [
         {
           "unique-id": "api-service-host",
@@ -27,6 +33,9 @@
       "node-type": "database",
       "name": "Application Database",
       "description": "PostgreSQL relational database that persists all application data and is accessed exclusively by the API service",
+      "costCenter": "CC-3001",
+      "owner": "data-team",
+      "environment": "production",
       "interfaces": [
         {
           "unique-id": "app-database-host",
@@ -43,6 +52,8 @@
     {
       "unique-id": "frontend-to-api",
       "description": "Sends user requests to and receives responses from the API service over HTTPS",
+      "dataClassification": "internal",
+      "encrypted": true,
       "relationship-type": {
         "connects": {
           "source": {
@@ -57,6 +68,8 @@
     {
       "unique-id": "api-to-database",
       "description": "Reads from and writes application data to the PostgreSQL database",
+      "dataClassification": "confidential",
+      "encrypted": true,
       "relationship-type": {
         "connects": {
           "source": {
