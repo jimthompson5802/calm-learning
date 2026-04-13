@@ -1,5 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/standards/company-relationship-standard.json",
   "title": "Company Relationship Standard",
   "allOf": [
     { "$ref": "https://calm.finos.org/release/1.2/meta/core.json#/defs/relationship" },
