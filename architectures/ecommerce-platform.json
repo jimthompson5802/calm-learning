@@ -12,7 +12,15 @@
         "version": "1.0.0",
         "created": "2026-04-12",
         "description": "E-commerce order processing platform",
-        "tags": ["ecommerce", "microservices", "orders"]
+        "tags": ["ecommerce", "microservices", "orders"],
+        "monitoring": {
+            "grafana-dashboard": "https://grafana.example.com/d/ecommerce-overview",
+            "kibana-logs": "https://kibana.example.com/app/discover#/ecommerce-*",
+            "pagerduty-service": "https://pagerduty.example.com/services/ECOMMERCE",
+            "statuspage": "https://status.example.com",
+            "metrics-retention": "30 days",
+            "log-retention": "90 days"
+        }
     },
     "controls": {
         "security": {
@@ -196,7 +204,10 @@
                 "health-endpoint": "/health",
                 "runbook": "https://runbooks.example.com/load-balancer",
                 "tier": "tier-1",
-                "dependencies": ["api-gateway-1", "api-gateway-2"]
+                "dependencies": ["api-gateway-1", "api-gateway-2"],
+                "dashboard": "https://grafana.example.com/d/load-balancer",
+                "log-query": "https://kibana.example.com/app/discover#/load-balancer-*",
+                "alerts": ["load-balancer-down", "backend-unhealthy", "high-traffic-spike", "ssl-cert-expiry"]
             }
         },
         {
@@ -224,7 +235,10 @@
                 "health-endpoint": "/actuator/health",
                 "runbook": "https://runbooks.example.com/api-gateway",
                 "tier": "tier-1",
-                "dependencies": ["load-balancer", "order-service", "inventory-service"]
+                "dependencies": ["load-balancer", "order-service", "inventory-service"],
+                "dashboard": "https://grafana.example.com/d/api-gateway",
+                "log-query": "https://kibana.example.com/app/discover#/api-gateway-*",
+                "alerts": ["api-gateway-down", "rate-limit-threshold-reached", "auth-failure-spike", "upstream-timeout"]
             },
             "controls": {
                 "performance": {
@@ -270,7 +284,10 @@
                 "health-endpoint": "/actuator/health",
                 "runbook": "https://runbooks.example.com/api-gateway",
                 "tier": "tier-1",
-                "dependencies": ["load-balancer", "order-service", "inventory-service"]
+                "dependencies": ["load-balancer", "order-service", "inventory-service"],
+                "dashboard": "https://grafana.example.com/d/api-gateway",
+                "log-query": "https://kibana.example.com/app/discover#/api-gateway-*",
+                "alerts": ["api-gateway-down", "rate-limit-threshold-reached", "auth-failure-spike", "upstream-timeout"]
             },
             "controls": {
                 "performance": {
@@ -337,7 +354,10 @@
                         "remediation": "Clear inventory cache; check replica sync status",
                         "escalation": "Contact platform-team for cache issues"
                     }
-                ]
+                ],
+                "dashboard": "https://grafana.example.com/d/order-service",
+                "log-query": "https://kibana.example.com/app/discover#/order-service-*",
+                "alerts": ["order-service-down", "db-connection-pool-exhausted", "circuit-breaker-open", "order-processing-error-rate-high"]
             },
             "controls": {
                 "circuit-breaker": {
@@ -404,7 +424,10 @@
                         "remediation": "Redeploy alerting config; manually trigger stock review if critical",
                         "escalation": "Contact platform-team for alerting infrastructure issues"
                     }
-                ]
+                ],
+                "dashboard": "https://grafana.example.com/d/inventory-service",
+                "log-query": "https://kibana.example.com/app/discover#/inventory-service-*",
+                "alerts": ["inventory-service-down", "db-replication-lag-high", "inventory-reservation-timeout", "stock-check-error-rate-high"]
             }
         },
         {
@@ -453,7 +476,10 @@
                         "remediation": "Halt retries immediately; reconcile with payment gateway",
                         "escalation": "Escalate to payments-team and finance on-call immediately"
                     }
-                ]
+                ],
+                "dashboard": "https://grafana.example.com/d/payment-service",
+                "log-query": "https://kibana.example.com/app/discover#/payment-service-*",
+                "alerts": ["payment-service-down", "payment-gateway-error-rate-high", "queue-consumer-stopped", "duplicate-payment-detected"]
             },
             "controls": {
                 "compliance": {
