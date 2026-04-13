@@ -67,9 +67,15 @@
                     "direction": "source-to-destination"
                 },
                 {
-                    "relationship-unique-id": "order-service-to-payment-service",
+                    "relationship-unique-id": "order-service-publishes-to-queue",
                     "sequence-number": 3,
-                    "description": "Order Service initiates payment processing",
+                    "description": "Order Service publishes payment request to message broker",
+                    "direction": "source-to-destination"
+                },
+                {
+                    "relationship-unique-id": "payment-service-consumes-from-queue",
+                    "sequence-number": 4,
+                    "description": "Payment Service consumes and processes payment request from message broker",
                     "direction": "source-to-destination"
                 }
             ],
@@ -400,6 +406,39 @@
             }
         },
         {
+            "unique-id": "message-broker",
+            "node-type": "system",
+            "name": "Message Broker",
+            "description": "RabbitMQ message broker providing durable async messaging between services; decouples order processing from payment processing to improve failure isolation",
+            "interfaces": [
+                {
+                    "unique-id": "message-broker-amqp",
+                    "protocol": "AMQP",
+                    "host": "message-broker.internal",
+                    "port": 5672
+                }
+            ],
+            "metadata": {
+                "owner": "platform-team@example.com",
+                "deployment-type": "managed",
+                "engine": "RabbitMQ",
+                "sla-tier": "tier-1",
+                "adr": "docs/adr/0001-use-message-queue-for-async-processing.md"
+            }
+        },
+        {
+            "unique-id": "order-queue",
+            "node-type": "system",
+            "name": "Order Queue",
+            "description": "Durable AMQP queue within the message broker that buffers order payment requests; allows Payment Service to be unavailable without losing orders",
+            "metadata": {
+                "owner": "platform-team@example.com",
+                "queue-type": "durable",
+                "dead-letter-queue": true,
+                "adr": "docs/adr/0001-use-message-queue-for-async-processing.md"
+            }
+        },
+        {
             "unique-id": "ecommerce-platform",
             "node-type": "system",
             "name": "E-Commerce Platform",
@@ -476,8 +515,8 @@
             }
         },
         {
-            "unique-id": "order-service-to-payment-service",
-            "description": "Initiates and confirms payment authorisation with",
+            "unique-id": "order-service-publishes-to-queue",
+            "description": "Publishes payment authorisation requests to",
             "relationship-type": {
                 "connects": {
                     "source": {
@@ -485,16 +524,40 @@
                         "interfaces": ["order-service-http"]
                     },
                     "destination": {
-                        "node": "payment-service",
-                        "interfaces": ["payment-service-https"]
+                        "node": "message-broker",
+                        "interfaces": ["message-broker-amqp"]
                     }
                 }
             },
-            "protocol": "HTTPS",
+            "protocol": "AMQP",
             "metadata": {
-                "latency-sla": "< 500ms p99",
                 "monitoring": true,
-                "circuit-breaker": true
+                "queue": "order-queue",
+                "pattern": "publish",
+                "adr": "docs/adr/0001-use-message-queue-for-async-processing.md"
+            }
+        },
+        {
+            "unique-id": "payment-service-consumes-from-queue",
+            "description": "Consumes and processes payment authorisation requests from",
+            "relationship-type": {
+                "connects": {
+                    "source": {
+                        "node": "payment-service",
+                        "interfaces": ["payment-service-https"]
+                    },
+                    "destination": {
+                        "node": "message-broker",
+                        "interfaces": ["message-broker-amqp"]
+                    }
+                }
+            },
+            "protocol": "AMQP",
+            "metadata": {
+                "monitoring": true,
+                "queue": "order-queue",
+                "pattern": "consume",
+                "adr": "docs/adr/0001-use-message-queue-for-async-processing.md"
             }
         },
         {
@@ -620,6 +683,18 @@
             }
         },
         {
+            "unique-id": "order-queue-composed-of-broker",
+            "description": "Hosted within and managed by",
+            "relationship-type": {
+                "composed-of": {
+                    "container": "message-broker",
+                    "nodes": [
+                        "order-queue"
+                    ]
+                }
+            }
+        },
+        {
             "unique-id": "ecommerce-platform-composed-of-services",
             "description": "Composed of all services and data stores that deliver order processing",
             "relationship-type": {
@@ -632,6 +707,7 @@
                         "order-service",
                         "inventory-service",
                         "payment-service",
+                        "message-broker",
                         "order-database-cluster",
                         "inventory-database"
                     ]
