@@ -179,7 +179,12 @@
                 "sla-tier": "tier-1",
                 "high-availability": true,
                 "health-check-interval-seconds": 10,
-                "algorithm": "round-robin"
+                "algorithm": "round-robin",
+                "oncall-slack": "#oncall-platform",
+                "health-endpoint": "/health",
+                "runbook": "https://runbooks.example.com/load-balancer",
+                "tier": "tier-1",
+                "dependencies": ["api-gateway-1", "api-gateway-2"]
             }
         },
         {
@@ -202,7 +207,12 @@
                 "deployment-type": "container",
                 "sla-tier": "tier-1",
                 "high-availability": true,
-                "ha-role": "primary"
+                "ha-role": "primary",
+                "oncall-slack": "#oncall-platform",
+                "health-endpoint": "/actuator/health",
+                "runbook": "https://runbooks.example.com/api-gateway",
+                "tier": "tier-1",
+                "dependencies": ["load-balancer", "order-service", "inventory-service"]
             },
             "controls": {
                 "performance": {
@@ -243,7 +253,12 @@
                 "deployment-type": "container",
                 "sla-tier": "tier-1",
                 "high-availability": true,
-                "ha-role": "secondary"
+                "ha-role": "secondary",
+                "oncall-slack": "#oncall-platform",
+                "health-endpoint": "/actuator/health",
+                "runbook": "https://runbooks.example.com/api-gateway",
+                "tier": "tier-1",
+                "dependencies": ["load-balancer", "order-service", "inventory-service"]
             },
             "controls": {
                 "performance": {
@@ -282,7 +297,35 @@
                 "owner": "platform-team@example.com",
                 "repository": "https://github.com/example-org/order-service",
                 "deployment-type": "container",
-                "sla-tier": "tier-1"
+                "sla-tier": "tier-1",
+                "oncall-slack": "#oncall-orders",
+                "health-endpoint": "/actuator/health",
+                "runbook": "https://runbooks.example.com/order-service",
+                "tier": "tier-1",
+                "dependencies": ["api-gateway-1", "api-gateway-2", "order-database-primary", "order-database-replica", "message-broker"],
+                "failure-modes": [
+                    {
+                        "symptom": "HTTP 503 errors",
+                        "likely-cause": "Database connection pool exhausted",
+                        "check": "Check connection pool metrics in Grafana dashboard",
+                        "remediation": "Scale up service replicas or increase pool size",
+                        "escalation": "If persists > 5min, page DBA team"
+                    },
+                    {
+                        "symptom": "High latency (>2s p99)",
+                        "likely-cause": "Payment service degradation",
+                        "check": "Check payment-service health and circuit breaker status",
+                        "remediation": "Circuit breaker should open automatically; check fallback queue",
+                        "escalation": "Contact payments-team if circuit breaker not triggering"
+                    },
+                    {
+                        "symptom": "Order validation failures",
+                        "likely-cause": "Inventory service returning stale data",
+                        "check": "Verify inventory-service cache TTL and database replication lag",
+                        "remediation": "Clear inventory cache; check replica sync status",
+                        "escalation": "Contact platform-team for cache issues"
+                    }
+                ]
             },
             "controls": {
                 "circuit-breaker": {
@@ -321,7 +364,35 @@
                 "owner": "platform-team@example.com",
                 "repository": "https://github.com/example-org/inventory-service",
                 "deployment-type": "container",
-                "sla-tier": "tier-2"
+                "sla-tier": "tier-2",
+                "oncall-slack": "#oncall-inventory",
+                "health-endpoint": "/actuator/health",
+                "runbook": "https://runbooks.example.com/inventory-service",
+                "tier": "tier-2",
+                "dependencies": ["api-gateway-1", "api-gateway-2", "inventory-database"],
+                "failure-modes": [
+                    {
+                        "symptom": "Stale stock levels returned",
+                        "likely-cause": "Database replication lag on read queries",
+                        "check": "Check replication lag in inventory-db replica metrics",
+                        "remediation": "Route reads to primary temporarily; investigate replica sync",
+                        "escalation": "Page DBA team if replication lag exceeds 30s"
+                    },
+                    {
+                        "symptom": "Inventory reservation timeouts",
+                        "likely-cause": "Inventory database connection pool exhausted or slow queries",
+                        "check": "Review slow query log and connection pool utilisation in Grafana",
+                        "remediation": "Kill long-running queries; increase pool size if sustained",
+                        "escalation": "Contact platform-team if pool utilisation consistently above 80%"
+                    },
+                    {
+                        "symptom": "Restocking alerts not firing",
+                        "likely-cause": "Threshold config misconfiguration or alerting pipeline failure",
+                        "check": "Verify alert thresholds in config and check alerting service health",
+                        "remediation": "Redeploy alerting config; manually trigger stock review if critical",
+                        "escalation": "Contact platform-team for alerting infrastructure issues"
+                    }
+                ]
             }
         },
         {
@@ -342,7 +413,35 @@
                 "owner": "platform-team@example.com",
                 "repository": "https://github.com/example-org/payment-service",
                 "deployment-type": "container",
-                "sla-tier": "tier-1"
+                "sla-tier": "tier-1",
+                "oncall-slack": "#oncall-payments",
+                "health-endpoint": "/actuator/health",
+                "runbook": "https://runbooks.example.com/payment-service",
+                "tier": "tier-1",
+                "dependencies": ["message-broker"],
+                "failure-modes": [
+                    {
+                        "symptom": "Payment authorisation failures",
+                        "likely-cause": "Downstream payment gateway unavailable or rejecting requests",
+                        "check": "Check payment gateway status page and outbound error rate in Grafana",
+                        "remediation": "Retry with exponential backoff; switch to secondary gateway if available",
+                        "escalation": "Page payments-team immediately; SLA breach risk within 5 minutes"
+                    },
+                    {
+                        "symptom": "Messages not being consumed from queue",
+                        "likely-cause": "Service crash, consumer thread stuck, or AMQP connection lost",
+                        "check": "Check service health endpoint and RabbitMQ consumer count for order-queue",
+                        "remediation": "Restart service pod; verify AMQP credentials and broker connectivity",
+                        "escalation": "Contact platform-team if queue depth exceeds 1000 messages"
+                    },
+                    {
+                        "symptom": "Duplicate payment charges",
+                        "likely-cause": "Idempotency key not being respected; retry storm from upstream",
+                        "check": "Audit payment logs for duplicate transaction IDs within last 15 minutes",
+                        "remediation": "Halt retries immediately; reconcile with payment gateway",
+                        "escalation": "Escalate to payments-team and finance on-call immediately"
+                    }
+                ]
             },
             "controls": {
                 "compliance": {
@@ -376,7 +475,10 @@
                 "deployment-type": "managed",
                 "engine": "PostgreSQL 15",
                 "db-role": "primary",
-                "replication-mode": "async"
+                "replication-mode": "async",
+                "backup-schedule": "0 2 * * *",
+                "restore-time": "< 30 minutes",
+                "dba-contact": "dba-team@example.com"
             }
         },
         {
@@ -400,7 +502,10 @@
                 "engine": "PostgreSQL 15",
                 "db-role": "replica",
                 "replication-mode": "async",
-                "replication-source": "order-database-primary"
+                "replication-source": "order-database-primary",
+                "backup-schedule": "0 3 * * *",
+                "restore-time": "< 30 minutes",
+                "dba-contact": "dba-team@example.com"
             }
         },
         {
@@ -452,7 +557,10 @@
                 "owner": "platform-team@example.com",
                 "repository": "https://github.com/example-org/inventory-service",
                 "deployment-type": "managed",
-                "engine": "PostgreSQL 15"
+                "engine": "PostgreSQL 15",
+                "backup-schedule": "0 2 * * *",
+                "restore-time": "< 30 minutes",
+                "dba-contact": "dba-team@example.com"
             }
         },
         {
