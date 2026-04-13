@@ -46,6 +46,20 @@
                     "config-url": "https://configs.example.com/infra/ha-config.yaml"
                 }
             ]
+        },
+        "high-availability": {
+            "description": "All tier-1 services must meet the platform-wide availability target of 99.9% uptime, measured monthly",
+            "requirements": [
+                {
+                    "requirement-url": "https://internal-policy.example.com/resilience/availability-sla",
+                    "config": {
+                        "target-uptime-percent": 99.9,
+                        "measurement-window": "monthly",
+                        "max-downtime-minutes-per-month": 43,
+                        "sla-tiers-in-scope": ["tier-1"]
+                    }
+                }
+            ]
         }
     },
     "flows": [
@@ -269,6 +283,24 @@
                 "repository": "https://github.com/example-org/order-service",
                 "deployment-type": "container",
                 "sla-tier": "tier-1"
+            },
+            "controls": {
+                "circuit-breaker": {
+                    "description": "Circuit breaker thresholds for Order Service outbound calls to protect against cascading failures",
+                    "requirements": [
+                        {
+                            "requirement-url": "https://internal-policy.example.com/resilience/circuit-breaker-policy",
+                            "config": {
+                                "failure-rate-threshold-percent": 50,
+                                "slow-call-rate-threshold-percent": 80,
+                                "slow-call-duration-threshold-ms": 2000,
+                                "sliding-window-size": 10,
+                                "wait-duration-in-open-state-seconds": 30,
+                                "permitted-calls-in-half-open-state": 3
+                            }
+                        }
+                    ]
+                }
             }
         },
         {
@@ -382,6 +414,24 @@
                 "engine": "PostgreSQL 15",
                 "high-availability": true,
                 "replication-mode": "async"
+            },
+            "controls": {
+                "failover": {
+                    "description": "Recovery time and recovery point objectives for the order database cluster in the event of a primary node failure",
+                    "requirements": [
+                        {
+                            "requirement-url": "https://internal-policy.example.com/resilience/database-failover-rto-rpo",
+                            "config": {
+                                "rto-seconds": 30,
+                                "rpo-seconds": 5,
+                                "failover-mode": "automatic",
+                                "health-check-interval-seconds": 5,
+                                "failover-trigger-missed-checks": 3,
+                                "replication-lag-alert-threshold-seconds": 10
+                            }
+                        }
+                    ]
+                }
             }
         },
         {
