@@ -67,6 +67,12 @@
             "unique-id": "order-processing-flow",
             "name": "Customer Order Processing",
             "description": "End-to-end flow from customer placing an order to payment confirmation",
+            "metadata": {
+                "business-impact": "Customers cannot complete purchases - direct revenue loss",
+                "degraded-behavior": "Orders queue in message broker; processed when service recovers",
+                "customer-communication": "Display 'Order processing delayed' message",
+                "sla": "99.9% availability, 30s p99 latency"
+            },
             "transitions": [
                 {
                     "relationship-unique-id": "customer-uses-platform",
@@ -112,6 +118,12 @@
             "unique-id": "inventory-check-flow",
             "name": "Inventory Stock Check",
             "description": "Admin checks and updates inventory stock levels",
+            "metadata": {
+                "business-impact": "Stock levels may be inaccurate - risk of overselling",
+                "degraded-behavior": "Fall back to cached inventory; flag orders for manual review",
+                "customer-communication": "Display 'Stock availability being confirmed'",
+                "sla": "99.5% availability, 500ms p99 latency"
+            },
             "transitions": [
                 {
                     "relationship-unique-id": "admin-uses-platform",
