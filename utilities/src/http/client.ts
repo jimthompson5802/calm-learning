@@ -19,7 +19,7 @@ export async function requestJson(options: RequestOptions): Promise<ResponsePayl
       ...init.headers,
       "Content-Type": "application/json"
     };
-    init.body = JSON.stringify(options.body);
+    init.body = typeof options.body === "string" ? options.body : JSON.stringify(options.body);
   }
 
   if (options.verbose) {

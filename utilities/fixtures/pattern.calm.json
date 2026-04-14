@@ -1,0 +1,6 @@
+{
+  "$schema": "https://calm.finos.org/release/1.2/meta/calm-pattern.json",
+  "unique-id": "shared-pattern",
+  "name": "Shared Pattern",
+  "description": "Reusable implementation pattern"
+}

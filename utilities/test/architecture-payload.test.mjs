@@ -6,6 +6,10 @@ import path from "node:path";
 
 const require = createRequire(import.meta.url);
 const { toArchitectureCreateRequest } = require("../dist/transformers/architecture-payload.js");
+const {
+  toJsonResourceCreateRequest,
+  extractWrappedJsonString
+} = require("../dist/transformers/json-resource-payload.js");
 
 const fixturesDir = path.resolve("fixtures");
 
@@ -46,4 +50,33 @@ test("explicit overrides take precedence over plain file values", async () => {
 
   assert.equal(result.name, "Override Name");
   assert.equal(result.description, "Override Description");
+});
+
+test("generic payload transformer can map to patternJson", async () => {
+  const input = await readFixture("pattern.calm.json");
+  const result = toJsonResourceCreateRequest(input, {
+    payloadTypeName: "Pattern",
+    jsonField: "patternJson"
+  });
+
+  assert.equal(result.name, "Shared Pattern");
+  assert.equal(result.description, "Reusable implementation pattern");
+  assert.equal(JSON.parse(result.patternJson)["unique-id"], "shared-pattern");
+});
+
+test("generic payload transformer can extract wrapped json string for raw version endpoints", async () => {
+  const input = await readFixture("flow.calm.json");
+  const result = extractWrappedJsonString(
+    input,
+    {
+      payloadTypeName: "Flow",
+      jsonField: "flowJson"
+    },
+    {
+      name: "Override Flow",
+      description: "Override flow description"
+    }
+  );
+
+  assert.equal(JSON.parse(result).name, "Order Processing");
 });

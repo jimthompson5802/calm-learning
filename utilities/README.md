@@ -29,6 +29,13 @@ node dist/index.js architectures create --namespace finos --file ./architecture.
 node dist/index.js architectures versions --namespace finos --id 12
 node dist/index.js architectures get --namespace finos --id 12 --version 1.0.0
 node dist/index.js architectures create-version --namespace finos --id 12 --version 1.0.1 --file ./architecture.json
+
+node dist/index.js patterns list --namespace finos
+node dist/index.js interfaces list --namespace finos
+node dist/index.js standards list --namespace finos
+node dist/index.js flows list --namespace finos
+node dist/index.js flows get --namespace finos --id 12
+node dist/index.js flows get-version --namespace finos --id 12 --version 1.0.0
 ```
 
 After building, the package also exposes the `calm-hub` executable through the package `bin` entry.
@@ -107,4 +114,8 @@ Example payloads live in [`fixtures/`](./fixtures):
 ```bash
 node dist/index.js namespaces create --file ./fixtures/namespace.json
 node dist/index.js architectures create --namespace finos --file ./fixtures/architecture.calm.json
+node dist/index.js patterns create --namespace finos --file ./fixtures/pattern.calm.json
+node dist/index.js interfaces create --namespace finos --file ./fixtures/interface.calm.json
+node dist/index.js standards create --namespace finos --file ./fixtures/standard.calm.json
+node dist/index.js flows create --namespace finos --file ./fixtures/flow.calm.json
 ```

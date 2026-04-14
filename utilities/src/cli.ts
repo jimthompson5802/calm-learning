@@ -1,7 +1,11 @@
 import { Command } from "commander";
 
 import { buildArchitecturesCommand } from "./resources/architectures";
+import { buildFlowsCommand } from "./resources/flows";
+import { buildInterfacesCommand } from "./resources/interfaces";
 import { buildNamespacesCommand } from "./resources/namespaces";
+import { buildPatternsCommand } from "./resources/patterns";
+import { buildStandardsCommand } from "./resources/standards";
 
 export function buildCli(): Command {
   const program = new Command();
@@ -16,6 +20,10 @@ export function buildCli(): Command {
 
   program.addCommand(buildNamespacesCommand());
   program.addCommand(buildArchitecturesCommand());
+  program.addCommand(buildPatternsCommand());
+  program.addCommand(buildInterfacesCommand());
+  program.addCommand(buildStandardsCommand());
+  program.addCommand(buildFlowsCommand());
 
   return program;
 }

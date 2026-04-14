@@ -1,0 +1,6 @@
+{
+  "$schema": "https://calm.finos.org/release/1.2/meta/calm-flow.json",
+  "unique-id": "order-processing",
+  "name": "Order Processing",
+  "description": "Order processing flow"
+}

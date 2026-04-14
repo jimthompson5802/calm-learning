@@ -1,0 +1,6 @@
+{
+  "$schema": "https://calm.finos.org/release/1.2/meta/calm-interface.json",
+  "unique-id": "payments-api",
+  "name": "Payments API",
+  "description": "Payment service interface"
+}
