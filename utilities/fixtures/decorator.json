@@ -1,0 +1,17 @@
+{
+  "$schema": "https://calm.finos.org/release/1.2/meta/calm-decorator.json",
+  "unique-id": "deployment-decorator",
+  "type": "deployment",
+  "target": [
+    "/calm/namespaces/finos/architectures/1/versions/1-0-0"
+  ],
+  "target-type": [
+    "architecture"
+  ],
+  "applies-to": [
+    "node"
+  ],
+  "data": {
+    "region": "us-east-1"
+  }
+}

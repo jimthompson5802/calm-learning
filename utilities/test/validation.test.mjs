@@ -3,7 +3,13 @@ import assert from "node:assert/strict";
 import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
-const { assertIntegerId, assertNamespace, assertVersion } = require("../dist/validation.js");
+const {
+  assertIntegerId,
+  assertNamespace,
+  assertVersion,
+  assertDomain,
+  assertAdrStatus
+} = require("../dist/validation.js");
 
 test("assertIntegerId rejects partially numeric ids", () => {
   assert.throws(() => assertIntegerId("12abc"), /non-negative integer/);
@@ -19,4 +25,12 @@ test("assertNamespace rejects invalid namespace characters", () => {
 
 test("assertVersion rejects invalid versions", () => {
   assert.throws(() => assertVersion("1.0.invalid"), /Version must match pattern/);
+});
+
+test("assertDomain accepts valid domain names", () => {
+  assert.equal(assertDomain("security"), "security");
+});
+
+test("assertAdrStatus accepts valid ADR statuses", () => {
+  assert.equal(assertAdrStatus("accepted"), "accepted");
 });

@@ -10,6 +10,10 @@ const cliPath = path.resolve("dist/index.js");
 test("top-level help includes the new resource families", async () => {
   const { stdout } = await execFileAsync("node", [cliPath, "--help"]);
 
+  assert.match(stdout, /\bdomains\b/);
+  assert.match(stdout, /\badrs\b/);
+  assert.match(stdout, /\bdecorators\b/);
+  assert.match(stdout, /\bcontrols\b/);
   assert.match(stdout, /\bpatterns\b/);
   assert.match(stdout, /\binterfaces\b/);
   assert.match(stdout, /\bstandards\b/);
@@ -21,4 +25,17 @@ test("flows help exposes both latest and versioned get commands", async () => {
 
   assert.match(stdout, /\bget\b/);
   assert.match(stdout, /\bget-version\b/);
+});
+
+test("controls help exposes the planned command surface", async () => {
+  const { stdout } = await execFileAsync("node", [cliPath, "controls", "--help"]);
+
+  assert.match(stdout, /\brequirement-versions\b/);
+  assert.match(stdout, /\brequirement-get\b/);
+  assert.match(stdout, /\brequirement-create-version\b/);
+  assert.match(stdout, /\bconfigurations\b/);
+  assert.match(stdout, /\bconfiguration-create\b/);
+  assert.match(stdout, /\bconfiguration-versions\b/);
+  assert.match(stdout, /\bconfiguration-get\b/);
+  assert.match(stdout, /\bconfiguration-create-version\b/);
 });

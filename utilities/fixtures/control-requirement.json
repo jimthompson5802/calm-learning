@@ -1,0 +1,5 @@
+{
+  "name": "Access Control",
+  "description": "Baseline access control requirement",
+  "requirementJson": "{\"id\":\"ac-1\",\"description\":\"Access must be controlled.\"}"
+}

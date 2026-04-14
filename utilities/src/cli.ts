@@ -1,6 +1,10 @@
 import { Command } from "commander";
 
 import { buildArchitecturesCommand } from "./resources/architectures";
+import { buildAdrsCommand } from "./resources/adrs";
+import { buildControlsCommand } from "./resources/controls";
+import { buildDecoratorsCommand } from "./resources/decorators";
+import { buildDomainsCommand } from "./resources/domains";
 import { buildFlowsCommand } from "./resources/flows";
 import { buildInterfacesCommand } from "./resources/interfaces";
 import { buildNamespacesCommand } from "./resources/namespaces";
@@ -19,7 +23,11 @@ export function buildCli(): Command {
     .option("--verbose", "Print request details to stderr.", false);
 
   program.addCommand(buildNamespacesCommand());
+  program.addCommand(buildDomainsCommand());
   program.addCommand(buildArchitecturesCommand());
+  program.addCommand(buildAdrsCommand());
+  program.addCommand(buildDecoratorsCommand());
+  program.addCommand(buildControlsCommand());
   program.addCommand(buildPatternsCommand());
   program.addCommand(buildInterfacesCommand());
   program.addCommand(buildStandardsCommand());
