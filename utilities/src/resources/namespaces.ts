@@ -35,12 +35,13 @@ export function buildNamespacesCommand(): Command {
 
   command
     .command("create")
-    .description("Create a namespace from a JSON file.")
-    .requiredOption("--file <path>", "Path to a namespace JSON file.")
-    .action(async (options: { file: string }, actionCommand: Command) => {
+    .description("Create a namespace from flags or a JSON file.")
+    .option("--file <path>", "Path to a namespace JSON file.")
+    .option("--name <name>", "Namespace name.")
+    .option("--description <description>", "Namespace description.")
+    .action(async (options: { file?: string; name?: string; description?: string }, actionCommand: Command) => {
       const config = resolveConfig(actionCommand.optsWithGlobals<GlobalOptions>());
-      const payload = await readJsonFile(options.file);
-      assertNamespacePayload(payload, options.file);
+      const payload = await resolveNamespacePayload(options);
       assertNamespace(payload.name);
 
       const response = await requestJson({
@@ -62,6 +63,45 @@ export function buildNamespacesCommand(): Command {
     });
 
   return command;
+}
+
+async function resolveNamespacePayload(options: {
+  file?: string;
+  name?: string;
+  description?: string;
+}): Promise<NamespaceCreateRequest> {
+  const filePath = options.file;
+  const hasFile = typeof filePath === "string";
+  const hasName = typeof options.name === "string";
+  const hasDescription = typeof options.description === "string";
+
+  if (hasFile && (hasName || hasDescription)) {
+    throw new Error('Use either "--file" or "--name" with "--description", but not both.');
+  }
+
+  if (hasFile) {
+    if (filePath === undefined) {
+      throw new Error("Namespace file path was not provided.");
+    }
+    const payload = await readJsonFile(filePath);
+    assertNamespacePayload(payload, filePath);
+    return payload;
+  }
+
+  if (hasName !== hasDescription) {
+    throw new Error('Namespace creation with flags requires both "--name" and "--description".');
+  }
+
+  if (hasName && hasDescription) {
+    const payload = {
+      name: options.name,
+      description: options.description
+    };
+    assertNamespacePayload(payload, "command line options");
+    return payload;
+  }
+
+  throw new Error('Provide either "--file <path>" or both "--name <name>" and "--description <description>".');
 }
 
 function assertNamespacePayload(payload: unknown, source: string): asserts payload is NamespaceCreateRequest {

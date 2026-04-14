@@ -22,6 +22,7 @@ npm test
 
 ```bash
 node dist/index.js namespaces list
+node dist/index.js namespaces create --name finos --description "FINOS namespace"
 node dist/index.js namespaces create --file ./namespace.json
 
 node dist/index.js architectures list --namespace finos
@@ -82,6 +83,12 @@ Namespace create files must contain:
 }
 ```
 
+You can also create a namespace directly from flags:
+
+```bash
+node dist/index.js namespaces create --name finos --description "FINOS namespace"
+```
+
 Architecture create files can use either of these shapes.
 
 Wrapped server payload:
@@ -113,6 +120,7 @@ Example payloads live in [`fixtures/`](./fixtures):
 
 ```bash
 node dist/index.js namespaces create --file ./fixtures/namespace.json
+node dist/index.js namespaces create --name finos --description "FINOS namespace"
 node dist/index.js architectures create --namespace finos --file ./fixtures/architecture.calm.json
 node dist/index.js patterns create --namespace finos --file ./fixtures/pattern.calm.json
 node dist/index.js interfaces create --namespace finos --file ./fixtures/interface.calm.json

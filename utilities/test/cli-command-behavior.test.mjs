@@ -179,3 +179,26 @@ test("flows create-version sends raw JSON instead of a wrapped request object", 
   assert.equal(parsed.name, "Order Processing");
   assert.equal(parsed["unique-id"], "order-processing");
 });
+
+test("namespaces create supports --name and --description without a file", async () => {
+  const result = await runCliWithMock([
+    "namespaces",
+    "create",
+    "--name",
+    "finos",
+    "--description",
+    "FINOS namespace"
+  ], {
+    responseStatus: 201,
+    responseLocation: "/calm/namespaces/finos",
+    responseBody: ""
+  });
+
+  assert.equal(result.request.method, "POST");
+  assert.equal(result.request.url, "http://localhost:8080/calm/namespaces");
+  const body = JSON.parse(result.request.body);
+  assert.deepEqual(body, {
+    name: "finos",
+    description: "FINOS namespace"
+  });
+});
