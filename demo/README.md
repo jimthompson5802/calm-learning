@@ -2,6 +2,20 @@
 
 Using results from the `Beginner` and `Intermediate` tutorials, demonstrate using CALM Hub to store the artifacts.
 
+## CALM Hub Screenshots
+
+### Architecture
+
+![](./images/calm-hub-architecture.png)
+
+### Standards
+
+![](./images/calm-hub-standards.png)
+
+### Patterns
+
+![](./images/calm-hub-patterns.png)
+
 ## Demonstration Script
 [setup-ecommerce-demo.sh](setup-ecommerce-demo.sh)
 
@@ -137,3 +151,4 @@ Next: list standards in namespace ecommerce
   ]
 }
 ```
+
