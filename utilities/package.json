@@ -1,0 +1,24 @@
+{
+  "name": "calm-learning-utilities",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Standalone CLI utilities for working with a local calm-hub server.",
+  "bin": {
+    "calm-hub": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf dist",
+    "test": "npm run build && node --test test/**/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "commander": "^14.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.8.3"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "$schema": "https://calm.finos.org/release/1.2/meta/calm.json",
+  "unique-id": "trading-platform",
+  "name": "Trading Platform",
+  "description": "Core architecture"
+}

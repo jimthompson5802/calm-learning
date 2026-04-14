@@ -1,0 +1,5 @@
+{
+  "name": "Broken Architecture",
+  "description": "Invalid wrapped payload",
+  "architectureJson": "{\"broken\": }"
+}
