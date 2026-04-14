@@ -1,0 +1,49 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import { createRequire } from "node:module";
+import path from "node:path";
+
+const require = createRequire(import.meta.url);
+const { toArchitectureCreateRequest } = require("../dist/transformers/architecture-payload.js");
+
+const fixturesDir = path.resolve("fixtures");
+
+async function readFixture(name) {
+  const file = await readFile(path.join(fixturesDir, name), "utf8");
+  return JSON.parse(file);
+}
+
+test("plain CALM JSON is converted to architectureJson and keeps top-level metadata", async () => {
+  const input = await readFixture("architecture.calm.json");
+  const result = toArchitectureCreateRequest(input);
+
+  assert.equal(result.name, "Trading Platform");
+  assert.equal(result.description, "Core architecture");
+  assert.equal(JSON.parse(result.architectureJson)["unique-id"], "trading-platform");
+});
+
+test("wrapped payload is passed through when architectureJson is valid JSON", async () => {
+  const input = await readFixture("architecture-wrapped.json");
+  const result = toArchitectureCreateRequest(input);
+
+  assert.equal(result.name, "Trading Platform");
+  assert.equal(result.description, "Core architecture");
+  assert.equal(JSON.parse(result.architectureJson).name, "Trading Platform");
+});
+
+test("wrapped payload rejects invalid architectureJson", async () => {
+  const input = await readFixture("architecture-invalid-wrapped.json");
+  assert.throws(() => toArchitectureCreateRequest(input), /invalid JSON in "architectureJson"/);
+});
+
+test("explicit overrides take precedence over plain file values", async () => {
+  const input = await readFixture("architecture.calm.json");
+  const result = toArchitectureCreateRequest(input, {
+    name: "Override Name",
+    description: "Override Description"
+  });
+
+  assert.equal(result.name, "Override Name");
+  assert.equal(result.description, "Override Description");
+});
