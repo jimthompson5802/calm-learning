@@ -24,6 +24,13 @@ npm test
 node dist/index.js namespaces list
 node dist/index.js namespaces create --name finos --description "FINOS namespace"
 node dist/index.js namespaces create --file ./namespace.json
+node dist/index.js domains list
+node dist/index.js domains create --name security
+node dist/index.js adrs list --namespace finos
+node dist/index.js adrs create --namespace finos --file ./adr.json
+node dist/index.js decorators list --namespace finos --type deployment
+node dist/index.js controls list --domain security
+node dist/index.js controls create --domain security --file ./control-requirement.json
 
 node dist/index.js architectures list --namespace finos
 node dist/index.js architectures create --namespace finos --file ./architecture.json
@@ -121,6 +128,13 @@ Example payloads live in [`fixtures/`](./fixtures):
 ```bash
 node dist/index.js namespaces create --file ./fixtures/namespace.json
 node dist/index.js namespaces create --name finos --description "FINOS namespace"
+node dist/index.js domains create --name security
+node dist/index.js adrs create --namespace finos --file ./fixtures/adr.json
+node dist/index.js decorators create --namespace finos --file ./fixtures/decorator.json
+node dist/index.js controls create --domain security --file ./fixtures/control-requirement.json
+node dist/index.js controls requirement-create-version --domain security --id 5 --version 1.0.1 --file ./fixtures/control-requirement-version.json
+node dist/index.js controls configuration-create --domain security --id 5 --file ./fixtures/control-configuration.json
+node dist/index.js controls configuration-create-version --domain security --id 5 --config-id 2 --version 1.0.1 --file ./fixtures/control-configuration-version.json
 node dist/index.js architectures create --namespace finos --file ./fixtures/architecture.calm.json
 node dist/index.js patterns create --namespace finos --file ./fixtures/pattern.calm.json
 node dist/index.js interfaces create --namespace finos --file ./fixtures/interface.calm.json

@@ -202,3 +202,316 @@ test("namespaces create supports --name and --description without a file", async
     description: "FINOS namespace"
   });
 });
+
+test("domains create posts a simple name payload", async () => {
+  const result = await runCliWithMock(
+    ["domains", "create", "--name", "security"],
+    {
+      responseStatus: 201,
+      responseLocation: "/calm/domains/security",
+      responseBody: ""
+    }
+  );
+
+  assert.equal(result.request.method, "POST");
+  assert.equal(result.request.url, "http://localhost:8080/calm/domains");
+  assert.deepEqual(JSON.parse(result.request.body), { name: "security" });
+});
+
+test("domains list uses the domains route", async () => {
+  const result = await runCliWithMock(["domains", "list"]);
+  assert.equal(result.request.method, "GET");
+  assert.equal(result.request.url, "http://localhost:8080/calm/domains");
+});
+
+test("adrs create posts the ADR request object to the namespace route", async () => {
+  const result = await runCliWithMock(
+    ["adrs", "create", "--namespace", "finos", "--file", path.join(fixturesDir, "adr.json")],
+    {
+      responseStatus: 201,
+      responseLocation: "/calm/namespaces/finos/adrs/2/revisions/1",
+      responseBody: ""
+    }
+  );
+
+  assert.equal(result.request.method, "POST");
+  assert.equal(result.request.url, "http://localhost:8080/calm/namespaces/finos/adrs");
+  assert.equal(JSON.parse(result.request.body).title, "Use OAuth2");
+});
+
+test("adrs get-revision uses the revision-specific route", async () => {
+  const result = await runCliWithMock([
+    "adrs",
+    "get-revision",
+    "--namespace",
+    "finos",
+    "--id",
+    "2",
+    "--revision",
+    "3"
+  ]);
+
+  assert.equal(result.request.url, "http://localhost:8080/calm/namespaces/finos/adrs/2/revisions/3");
+});
+
+test("adrs status posts to the status route", async () => {
+  const result = await runCliWithMock(
+    ["adrs", "status", "--namespace", "finos", "--id", "2", "--status", "accepted"],
+    {
+      responseStatus: 201,
+      responseLocation: "/calm/namespaces/finos/adrs/2/revisions/4",
+      responseBody: ""
+    }
+  );
+
+  assert.equal(result.request.method, "POST");
+  assert.equal(
+    result.request.url,
+    "http://localhost:8080/calm/namespaces/finos/adrs/2/status/accepted"
+  );
+});
+
+test("adrs get uses the latest revision route", async () => {
+  const result = await runCliWithMock(["adrs", "get", "--namespace", "finos", "--id", "2"]);
+  assert.equal(result.request.url, "http://localhost:8080/calm/namespaces/finos/adrs/2");
+});
+
+test("adrs revisions uses the revisions route", async () => {
+  const result = await runCliWithMock(["adrs", "revisions", "--namespace", "finos", "--id", "2"]);
+  assert.equal(result.request.url, "http://localhost:8080/calm/namespaces/finos/adrs/2/revisions");
+});
+
+test("adrs update posts to the ADR update route", async () => {
+  const result = await runCliWithMock(
+    ["adrs", "update", "--namespace", "finos", "--id", "2", "--file", path.join(fixturesDir, "adr.json")],
+    {
+      responseStatus: 201,
+      responseLocation: "/calm/namespaces/finos/adrs/2/revisions/2",
+      responseBody: ""
+    }
+  );
+
+  assert.equal(result.request.method, "POST");
+  assert.equal(result.request.url, "http://localhost:8080/calm/namespaces/finos/adrs/2");
+});
+
+test("decorators list includes both target and type filters when provided", async () => {
+  const result = await runCliWithMock([
+    "decorators",
+    "list",
+    "--namespace",
+    "finos",
+    "--target",
+    "/calm/namespaces/finos/architectures/1/versions/1-0-0",
+    "--type",
+    "deployment"
+  ]);
+
+  assert.equal(
+    result.request.url,
+    "http://localhost:8080/calm/namespaces/finos/decorators?target=%2Fcalm%2Fnamespaces%2Ffinos%2Farchitectures%2F1%2Fversions%2F1-0-0&type=deployment"
+  );
+});
+
+test("decorators list includes only the target filter when requested", async () => {
+  const result = await runCliWithMock([
+    "decorators",
+    "list",
+    "--namespace",
+    "finos",
+    "--target",
+    "/calm/namespaces/finos/architectures/1/versions/1-0-0"
+  ]);
+
+  assert.equal(
+    result.request.url,
+    "http://localhost:8080/calm/namespaces/finos/decorators?target=%2Fcalm%2Fnamespaces%2Ffinos%2Farchitectures%2F1%2Fversions%2F1-0-0"
+  );
+});
+
+test("decorators list includes only the type filter when requested", async () => {
+  const result = await runCliWithMock([
+    "decorators",
+    "list",
+    "--namespace",
+    "finos",
+    "--type",
+    "deployment"
+  ]);
+
+  assert.equal(
+    result.request.url,
+    "http://localhost:8080/calm/namespaces/finos/decorators?type=deployment"
+  );
+});
+
+test("decorators values uses the values route", async () => {
+  const result = await runCliWithMock([
+    "decorators",
+    "values",
+    "--namespace",
+    "finos"
+  ]);
+
+  assert.equal(result.request.url, "http://localhost:8080/calm/namespaces/finos/decorators/values");
+});
+
+test("decorators create sends raw JSON body", async () => {
+  const result = await runCliWithMock(
+    ["decorators", "create", "--namespace", "finos", "--file", path.join(fixturesDir, "decorator.json")],
+    {
+      responseStatus: 201,
+      responseLocation: "/calm/namespaces/finos/decorators/9",
+      responseBody: "{\"id\":9}"
+    }
+  );
+
+  assert.equal(result.request.method, "POST");
+  assert.equal(result.request.url, "http://localhost:8080/calm/namespaces/finos/decorators");
+  assert.equal(JSON.parse(result.request.body).type, "deployment");
+});
+
+test("decorators update uses PUT with the decorator id route", async () => {
+  const result = await runCliWithMock(
+    [
+      "decorators",
+      "update",
+      "--namespace",
+      "finos",
+      "--id",
+      "9",
+      "--file",
+      path.join(fixturesDir, "decorator.json")
+    ],
+    {
+      responseStatus: 200,
+      responseBody: ""
+    }
+  );
+
+  assert.equal(result.request.method, "PUT");
+  assert.equal(result.request.url, "http://localhost:8080/calm/namespaces/finos/decorators/9");
+});
+
+test("controls create sends wrapped requirement payload", async () => {
+  const result = await runCliWithMock(
+    ["controls", "create", "--domain", "security", "--file", path.join(fixturesDir, "control-requirement.json")],
+    {
+      responseStatus: 201,
+      responseLocation: "/calm/domains/security/controls/5",
+      responseBody: "{\"id\":5}"
+    }
+  );
+
+  assert.equal(result.request.url, "http://localhost:8080/calm/domains/security/controls");
+  const body = JSON.parse(result.request.body);
+  assert.equal(body.name, "Access Control");
+  assert.equal(JSON.parse(body.requirementJson).id, "ac-1");
+});
+
+test("controls list uses the domain controls route", async () => {
+  const result = await runCliWithMock(["controls", "list", "--domain", "security"]);
+  assert.equal(result.request.url, "http://localhost:8080/calm/domains/security/controls");
+});
+
+test("controls requirement-create-version sends raw requirement JSON", async () => {
+  const result = await runCliWithMock(
+    [
+      "controls",
+      "requirement-create-version",
+      "--domain",
+      "security",
+      "--id",
+      "5",
+      "--version",
+      "1.0.1",
+      "--file",
+      path.join(fixturesDir, "control-requirement-version.json")
+    ],
+    {
+      responseStatus: 201,
+      responseLocation: "/calm/domains/security/controls/5/requirement/versions/1.0.1",
+      responseBody: ""
+    }
+  );
+
+  assert.equal(
+    result.request.url,
+    "http://localhost:8080/calm/domains/security/controls/5/requirement/versions/1.0.1"
+  );
+  assert.equal(JSON.parse(result.request.body).id, "ac-1");
+});
+
+test("controls configuration-create sends wrapped configuration payload", async () => {
+  const result = await runCliWithMock(
+    [
+      "controls",
+      "configuration-create",
+      "--domain",
+      "security",
+      "--id",
+      "5",
+      "--file",
+      path.join(fixturesDir, "control-configuration.json")
+    ],
+    {
+      responseStatus: 201,
+      responseLocation: "/calm/domains/security/controls/5/configurations/2",
+      responseBody: ""
+    }
+  );
+
+  assert.equal(
+    result.request.url,
+    "http://localhost:8080/calm/domains/security/controls/5/configurations"
+  );
+  assert.equal(JSON.parse(JSON.parse(result.request.body).configurationJson).enforcement, "strict");
+});
+
+test("controls configuration-versions uses the configuration versions route", async () => {
+  const result = await runCliWithMock([
+    "controls",
+    "configuration-versions",
+    "--domain",
+    "security",
+    "--id",
+    "5",
+    "--config-id",
+    "2"
+  ]);
+
+  assert.equal(
+    result.request.url,
+    "http://localhost:8080/calm/domains/security/controls/5/configurations/2/versions"
+  );
+});
+
+test("controls configuration-create-version sends raw configuration JSON", async () => {
+  const result = await runCliWithMock(
+    [
+      "controls",
+      "configuration-create-version",
+      "--domain",
+      "security",
+      "--id",
+      "5",
+      "--config-id",
+      "2",
+      "--version",
+      "1.0.1",
+      "--file",
+      path.join(fixturesDir, "control-configuration-version.json")
+    ],
+    {
+      responseStatus: 201,
+      responseLocation: "/calm/domains/security/controls/5/configurations/2/versions/1.0.1",
+      responseBody: ""
+    }
+  );
+
+  assert.equal(
+    result.request.url,
+    "http://localhost:8080/calm/domains/security/controls/5/configurations/2/versions/1.0.1"
+  );
+  assert.equal(JSON.parse(result.request.body).enforcement, "moderate");
+});

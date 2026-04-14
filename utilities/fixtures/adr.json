@@ -1,0 +1,21 @@
+{
+  "title": "Use OAuth2",
+  "contextAndProblemStatement": "Clients need a standard authentication mechanism.",
+  "decisionDrivers": ["Security", "Interoperability"],
+  "consideredOptions": [
+    {
+      "name": "OAuth2",
+      "description": "Use OAuth2 with JWT tokens."
+    }
+  ],
+  "decisionOutcome": {
+    "chosenOption": "OAuth2",
+    "description": "Adopt OAuth2 as the authentication standard."
+  },
+  "links": [
+    {
+      "title": "ADR reference",
+      "url": "https://example.com/adr"
+    }
+  ]
+}
