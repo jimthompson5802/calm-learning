@@ -1,0 +1,9 @@
+{
+  "name": "my-architecture",
+  "version": "1.0.0",
+  "description": "Example architecture payload",
+  "architectureJson": {
+    "nodes": [],
+    "relationships": []
+  }
+}
