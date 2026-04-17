@@ -21,40 +21,49 @@ npm test
 ## Usage
 
 ```bash
-node dist/index.js namespaces list
-node dist/index.js namespaces create --name finos --description "FINOS namespace"
-node dist/index.js namespaces create --file ./namespace.json
-node dist/index.js domains list
-node dist/index.js domains create --name security
-node dist/index.js adrs list --namespace finos
-node dist/index.js adrs create --namespace finos --file ./adr.json
-node dist/index.js decorators list --namespace finos --type deployment
-node dist/index.js controls list --domain security
-node dist/index.js controls create --domain security --file ./control-requirement.json
+calm-hub-cli namespaces list
+calm-hub-cli namespaces create --name finos --description "FINOS namespace"
+calm-hub-cli namespaces create --file ./namespace.json
+calm-hub-cli domains list
+calm-hub-cli domains create --name security
+calm-hub-cli adrs list --namespace finos
+calm-hub-cli adrs create --namespace finos --file ./adr.json
+calm-hub-cli decorators list --namespace finos --type deployment
+calm-hub-cli controls list --domain security
+calm-hub-cli controls create --domain security --file ./control-requirement.json
 
-node dist/index.js architectures list --namespace finos
-node dist/index.js architectures create --namespace finos --file ./architecture.json
-node dist/index.js architectures versions --namespace finos --id 12
-node dist/index.js architectures get --namespace finos --id 12 --version 1.0.0
-node dist/index.js architectures create-version --namespace finos --id 12 --version 1.0.1 --file ./architecture.json
+calm-hub-cli architectures list --namespace finos
+calm-hub-cli architectures create --namespace finos --file ./architecture.json
+calm-hub-cli architectures versions --namespace finos --id 12
+calm-hub-cli architectures get --namespace finos --id 12 --version 1.0.0
+calm-hub-cli architectures create-version --namespace finos --id 12 --version 1.0.1 --file ./architecture.json
 
-node dist/index.js patterns list --namespace finos
-node dist/index.js interfaces list --namespace finos
-node dist/index.js standards list --namespace finos
-node dist/index.js flows list --namespace finos
-node dist/index.js flows get --namespace finos --id 12
-node dist/index.js flows get-version --namespace finos --id 12 --version 1.0.0
+calm-hub-cli patterns list --namespace finos
+calm-hub-cli interfaces list --namespace finos
+calm-hub-cli standards list --namespace finos
+calm-hub-cli flows list --namespace finos
+calm-hub-cli flows get --namespace finos --id 12
+calm-hub-cli flows get-version --namespace finos --id 12 --version 1.0.0
 ```
 
 After building, the package also exposes the `calm-hub-cli` executable through the package `bin` entry.
 
 ## Using The Executable
 
-From [`utilities/`](./), you can make the `calm-hub-cli` command available in your shell:
+From [`utilities/`](./), you can link the package into your global npm environment so `calm-hub-cli` is available on your `PATH`:
 
 ```bash
+npm install
+npm run build
 npm link
+which calm-hub-cli
 calm-hub-cli namespaces list
+```
+
+If you later want to remove the global link, run:
+
+```bash
+npm unlink -g calm-learning-utilities
 ```
 
 If you prefer not to link it globally, you can also run it with `npx` from inside `utilities`:
