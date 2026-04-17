@@ -15,7 +15,7 @@ export function buildCli(): Command {
   const program = new Command();
 
   program
-    .name("calm-hub")
+    .name("calm-hub-cli")
     .description("CLI for issuing requests to a calm-hub server.")
     .option("--base-url <url>", "Base URL for calm-hub.", "http://localhost:8080")
     .option("--out <path>", "Write rendered output to a file.")

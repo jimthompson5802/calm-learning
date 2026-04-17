@@ -5,34 +5,34 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-if ! command -v calm-hub >/dev/null 2>&1; then
-  echo "Error: calm-hub is not available on PATH." >&2
+if ! command -v calm-hub-cli >/dev/null 2>&1; then
+  echo "Error: calm-hub-cli is not available on PATH." >&2
   exit 1
 fi
 
 echo
 echo "Next: list namespaces"
-calm-hub namespaces list
+calm-hub-cli namespaces list
 
 echo
 echo "Next: create namespace ecommerce"
-calm-hub namespaces create \
+calm-hub-cli namespaces create \
   --name "ecommerce" \
   --description "Ecommerce demo"
 
 echo
 echo "Next: list namespaces"
-calm-hub namespaces list
+calm-hub-cli namespaces list
 
 echo
 echo "Next: create architecture ecommerce-platform in namespace ecommerce"
-calm-hub architectures create \
+calm-hub-cli architectures create \
   --namespace "ecommerce" \
   --file "$REPO_ROOT/architectures/ecommerce-platform.json"
 
 echo
 echo "Next: create pattern Company Base Pattern in namespace ecommerce"
-calm-hub patterns create \
+calm-hub-cli patterns create \
   --namespace "ecommerce" \
   --file "$REPO_ROOT/patterns/company-base-pattern.json" \
   --name "Company Base Pattern" \
@@ -40,7 +40,7 @@ calm-hub patterns create \
 
 echo
 echo "Next: create standard Company Node Standard in namespace ecommerce"
-calm-hub standards create \
+calm-hub-cli standards create \
   --namespace "ecommerce" \
   --file "$REPO_ROOT/standards/company-node-standard.json" \
   --name "Company Node Standard" \
@@ -48,7 +48,7 @@ calm-hub standards create \
 
 echo
 echo "Next: create standard Company Relationship Standard in namespace ecommerce"
-calm-hub standards create \
+calm-hub-cli standards create \
   --namespace "ecommerce" \
   --file "$REPO_ROOT/standards/company-relationship-standard.json" \
   --name "Company Relationship Standard" \
@@ -56,12 +56,12 @@ calm-hub standards create \
 
 echo
 echo "Next: list architectures in namespace ecommerce"
-calm-hub architectures list --namespace "ecommerce"
+calm-hub-cli architectures list --namespace "ecommerce"
 
 echo
 echo "Next: list patterns in namespace ecommerce"
-calm-hub patterns list --namespace "ecommerce"
+calm-hub-cli patterns list --namespace "ecommerce"
 
 echo
 echo "Next: list standards in namespace ecommerce"
-calm-hub standards list --namespace "ecommerce"
+calm-hub-cli standards list --namespace "ecommerce"

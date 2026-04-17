@@ -10,6 +10,7 @@ const cliPath = path.resolve("dist/index.js");
 test("top-level help includes the new resource families", async () => {
   const { stdout } = await execFileAsync("node", [cliPath, "--help"]);
 
+  assert.match(stdout, /\bcalm-hub-cli\b/);
   assert.match(stdout, /\bdomains\b/);
   assert.match(stdout, /\badrs\b/);
   assert.match(stdout, /\bdecorators\b/);

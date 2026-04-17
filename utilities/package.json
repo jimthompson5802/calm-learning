@@ -4,7 +4,7 @@
   "private": true,
   "description": "Standalone CLI utilities for working with a local calm-hub server.",
   "bin": {
-    "calm-hub": "dist/index.js"
+    "calm-hub-cli": "dist/index.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",

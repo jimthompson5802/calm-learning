@@ -1,4 +1,4 @@
-# calm-hub CLI
+# calm-hub-cli CLI
 
 This directory contains a standalone TypeScript CLI for issuing requests to a local `calm-hub` server.
 
@@ -46,21 +46,21 @@ node dist/index.js flows get --namespace finos --id 12
 node dist/index.js flows get-version --namespace finos --id 12 --version 1.0.0
 ```
 
-After building, the package also exposes the `calm-hub` executable through the package `bin` entry.
+After building, the package also exposes the `calm-hub-cli` executable through the package `bin` entry.
 
 ## Using The Executable
 
-From [`utilities/`](./), you can make the `calm-hub` command available in your shell:
+From [`utilities/`](./), you can make the `calm-hub-cli` command available in your shell:
 
 ```bash
 npm link
-calm-hub namespaces list
+calm-hub-cli namespaces list
 ```
 
 If you prefer not to link it globally, you can also run it with `npx` from inside `utilities`:
 
 ```bash
-npx calm-hub namespaces list
+npx calm-hub-cli namespaces list
 ```
 
 You can always fall back to the built file directly:
