@@ -4,11 +4,9 @@ Using results from the `Beginner` and `Intermediate` tutorials, demonstrate usin
 
 ## What `calm-hub-cli` cli Is 
 
-At the moment the name `calm-hub` has two meanings. One is the server component that houses architecture artifacts. The other meaning is for a cli that interacts with the server component. For purposes of this README, the primary meaning will be in the context of the cli command `calm-hub-cli`.
-
 `calm-hub-cli` is the command-line interface used in this demo to send requests to a local CALM Hub server. In this repository it is provided by the package in [`../utilities/`](../utilities), where the executable is exposed through the package `bin` entry after the CLI is built.
 
-You can use `calm-hub-cli` as a shorthand for running the built CLI directly, which makes it convenient for demo flows like creating namespaces, uploading architectures, patterns, and standards, and listing the resources stored in CALM Hub.
+You can use `calm-hub-cli` way to invoke CALM Hub server functionality, such as creating namespaces, uploading architectures, patterns, and standards, and listing the resources stored in CALM Hub.
 
 ## CALM Hub Server Screenshots
 
