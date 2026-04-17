@@ -135,18 +135,18 @@ When a plain CALM JSON file is used, the CLI automatically reads the top-level `
 Example payloads live in [`fixtures/`](./fixtures):
 
 ```bash
-node dist/index.js namespaces create --file ./fixtures/namespace.json
-node dist/index.js namespaces create --name finos --description "FINOS namespace"
-node dist/index.js domains create --name security
-node dist/index.js adrs create --namespace finos --file ./fixtures/adr.json
-node dist/index.js decorators create --namespace finos --file ./fixtures/decorator.json
-node dist/index.js controls create --domain security --file ./fixtures/control-requirement.json
-node dist/index.js controls requirement-create-version --domain security --id 5 --version 1.0.1 --file ./fixtures/control-requirement-version.json
-node dist/index.js controls configuration-create --domain security --id 5 --file ./fixtures/control-configuration.json
-node dist/index.js controls configuration-create-version --domain security --id 5 --config-id 2 --version 1.0.1 --file ./fixtures/control-configuration-version.json
-node dist/index.js architectures create --namespace finos --file ./fixtures/architecture.calm.json
-node dist/index.js patterns create --namespace finos --file ./fixtures/pattern.calm.json
-node dist/index.js interfaces create --namespace finos --file ./fixtures/interface.calm.json
-node dist/index.js standards create --namespace finos --file ./fixtures/standard.calm.json
-node dist/index.js flows create --namespace finos --file ./fixtures/flow.calm.json
+calm-hub-cli namespaces create --file ./fixtures/namespace.json
+calm-hub-cli namespaces create --name finos --description "FINOS namespace"
+calm-hub-cli domains create --name security
+calm-hub-cli adrs create --namespace finos --file ./fixtures/adr.json
+calm-hub-cli decorators create --namespace finos --file ./fixtures/decorator.json
+calm-hub-cli controls create --domain security --file ./fixtures/control-requirement.json
+calm-hub-cli controls requirement-create-version --domain security --id 5 --version 1.0.1 --file ./fixtures/control-requirement-version.json
+calm-hub-cli controls configuration-create --domain security --id 5 --file ./fixtures/control-configuration.json
+calm-hub-cli controls configuration-create-version --domain security --id 5 --config-id 2 --version 1.0.1 --file ./fixtures/control-configuration-version.json
+calm-hub-cli architectures create --namespace finos --file ./fixtures/architecture.calm.json
+calm-hub-cli patterns create --namespace finos --file ./fixtures/pattern.calm.json
+calm-hub-cli interfaces create --namespace finos --file ./fixtures/interface.calm.json
+calm-hub-cli standards create --namespace finos --file ./fixtures/standard.calm.json
+calm-hub-cli flows create --namespace finos --file ./fixtures/flow.calm.json
 ```
