@@ -27,10 +27,16 @@ You can use `calm-hub-cli` as a shorthand for running the built CLI directly, wh
 ## Demonstration Script
 [setup-ecommerce-demo.sh](setup-ecommerce-demo.sh)
 
-## Example Output
 ```
-$ demo/setup-ecommerce-demo.sh 
+$ ./demo/setup-ecommerce-demo.sh 
+```
 
+## Example Output
+
+```
+
+
+$ calm-hub-cli namespaces list
 Next: list namespaces
 {
   "values": [
@@ -49,6 +55,7 @@ Next: list namespaces
   ]
 }
 
+$ calm-hub-cli namespaces create --name "ecommerce" --description "Ecommerce demo"
 Next: create namespace ecommerce
 {
   "ok": true,
@@ -59,6 +66,7 @@ Next: create namespace ecommerce
   "data": null
 }
 
+$ calm-hub-cli namespaces list
 Next: list namespaces
 {
   "values": [
@@ -81,6 +89,7 @@ Next: list namespaces
   ]
 }
 
+$ calm-hub-cli architectures create --namespace "ecommerce" --file "$REPO_ROOT/architectures/ecommerce-platform.json"
 Next: create architecture ecommerce-platform in namespace ecommerce
 {
   "ok": true,
@@ -91,6 +100,7 @@ Next: create architecture ecommerce-platform in namespace ecommerce
   "data": null
 }
 
+$ calm-hub-cli patterns create --namespace "ecommerce" --file "$REPO_ROOT/patterns/company-base-pattern.json" --name "Company Base Pattern" --description "A base pattern enforcing organisational standards on all CALM architectures. Every node must comply with the Company Node Standard (cost center, owner, environment) and every relationship must comply with the Company Relationship Standard (data classification, encrypted)."
 Next: create pattern Company Base Pattern in namespace ecommerce
 {
   "ok": true,
@@ -101,6 +111,7 @@ Next: create pattern Company Base Pattern in namespace ecommerce
   "data": null
 }
 
+$ calm-hub-cli standards create --namespace "ecommerce" --file "$REPO_ROOT/standards/company-node-standard.json" --name "Company Node Standard" --description "Defines required node metadata including cost center, owner, and environment constraints for CALM nodes."
 Next: create standard Company Node Standard in namespace ecommerce
 {
   "ok": true,
@@ -111,6 +122,7 @@ Next: create standard Company Node Standard in namespace ecommerce
   "data": null
 }
 
+$ calm-hub-cli standards create --namespace "ecommerce" --file "$REPO_ROOT/standards/company-relationship-standard.json" --name "Company Relationship Standard" --description "Defines required relationship metadata including data classification and encryption requirements for CALM relationships."
 Next: create standard Company Relationship Standard in namespace ecommerce
 {
   "ok": true,
@@ -121,6 +133,7 @@ Next: create standard Company Relationship Standard in namespace ecommerce
   "data": null
 }
 
+$ calm-hub-cli architectures list --namespace "ecommerce"
 Next: list architectures in namespace ecommerce
 {
   "values": [
@@ -132,6 +145,7 @@ Next: list architectures in namespace ecommerce
   ]
 }
 
+$ calm-hub-cli patterns list --namespace "ecommerce"
 Next: list patterns in namespace ecommerce
 {
   "values": [
@@ -143,6 +157,7 @@ Next: list patterns in namespace ecommerce
   ]
 }
 
+$ calm-hub-cli standards list --namespace "ecommerce"
 Next: list standards in namespace ecommerce
 {
   "values": [
