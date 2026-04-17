@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+if ! command -v calm-hub-cli >/dev/null 2>&1; then
+  echo "Error: calm-hub-cli is not available on PATH." >&2
+  exit 1
+fi
+
+help_commands=(
+  "calm-hub-cli --help"
+  "calm-hub-cli namespaces --help"
+  "calm-hub-cli namespaces list --help"
+  "calm-hub-cli namespaces create --help"
+  "calm-hub-cli domains --help"
+  "calm-hub-cli domains list --help"
+  "calm-hub-cli domains create --help"
+  "calm-hub-cli architectures --help"
+  "calm-hub-cli architectures list --help"
+  "calm-hub-cli architectures create --help"
+  "calm-hub-cli architectures versions --help"
+  "calm-hub-cli architectures get --help"
+  "calm-hub-cli architectures create-version --help"
+  "calm-hub-cli adrs --help"
+  "calm-hub-cli adrs list --help"
+  "calm-hub-cli adrs create --help"
+  "calm-hub-cli adrs get --help"
+  "calm-hub-cli adrs revisions --help"
+  "calm-hub-cli adrs get-revision --help"
+  "calm-hub-cli adrs update --help"
+  "calm-hub-cli adrs status --help"
+  "calm-hub-cli decorators --help"
+  "calm-hub-cli decorators list --help"
+  "calm-hub-cli decorators values --help"
+  "calm-hub-cli decorators get --help"
+  "calm-hub-cli decorators create --help"
+  "calm-hub-cli decorators update --help"
+  "calm-hub-cli controls --help"
+  "calm-hub-cli controls list --help"
+  "calm-hub-cli controls create --help"
+  "calm-hub-cli controls requirement-versions --help"
+  "calm-hub-cli controls requirement-get --help"
+  "calm-hub-cli controls requirement-create-version --help"
+  "calm-hub-cli controls configurations --help"
+  "calm-hub-cli controls configuration-create --help"
+  "calm-hub-cli controls configuration-versions --help"
+  "calm-hub-cli controls configuration-get --help"
+  "calm-hub-cli controls configuration-create-version --help"
+  "calm-hub-cli patterns --help"
+  "calm-hub-cli patterns list --help"
+  "calm-hub-cli patterns create --help"
+  "calm-hub-cli patterns versions --help"
+  "calm-hub-cli patterns get --help"
+  "calm-hub-cli patterns create-version --help"
+  "calm-hub-cli interfaces --help"
+  "calm-hub-cli interfaces list --help"
+  "calm-hub-cli interfaces create --help"
+  "calm-hub-cli interfaces versions --help"
+  "calm-hub-cli interfaces get --help"
+  "calm-hub-cli interfaces create-version --help"
+  "calm-hub-cli standards --help"
+  "calm-hub-cli standards list --help"
+  "calm-hub-cli standards create --help"
+  "calm-hub-cli standards versions --help"
+  "calm-hub-cli standards get --help"
+  "calm-hub-cli standards create-version --help"
+  "calm-hub-cli flows --help"
+  "calm-hub-cli flows list --help"
+  "calm-hub-cli flows create --help"
+  "calm-hub-cli flows versions --help"
+  "calm-hub-cli flows get --help"
+  "calm-hub-cli flows get-version --help"
+  "calm-hub-cli flows create-version --help"
+)
+
+for cmd in "${help_commands[@]}"; do
+  echo
+  echo "$ $cmd"
+  bash -lc "$cmd"
+done
