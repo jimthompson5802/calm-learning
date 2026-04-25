@@ -1,0 +1,37 @@
+{
+    "$schema": "https://calm.finos.org/release/1.2/meta/calm.json",
+    "unique-id": "test-protocol",
+    "name": "Test Protocol Architecture",
+    "description": "A minimal architecture for testing protocol properties",
+    "nodes": [
+        {
+            "unique-id": "service-a",
+            "node-type": "service",
+            "name": "A",
+            "description": "Service A"
+        },
+        {
+            "unique-id": "service-b",
+            "node-type": "service",
+            "name": "B",
+            "description": "Service B"
+        }
+    ],
+    "relationships": [
+        {
+            "unique-id": "service-a-to-service-b",
+            "description": "Connects to",
+            "protocol": "HTTPS",
+            "relationship-type": {
+                "connects": {
+                    "source": {
+                        "node": "service-a"
+                    },
+                    "destination": {
+                        "node": "service-b"
+                    }
+                }
+            }
+        }
+    ]
+}
