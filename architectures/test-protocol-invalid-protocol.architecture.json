@@ -1,0 +1,57 @@
+{
+    "$schema": "https://calm.finos.org/release/1.2/meta/calm.json",
+    "unique-id": "test-protocol-invalid-protocol",
+    "name": "Test Protocol Architecture (invalid protocol)",
+    "description": "Variant with existing protocol set to an invalid value",
+    "nodes": [
+        {
+            "unique-id": "service-a",
+            "node-type": "service",
+            "name": "A",
+            "description": "Service A"
+        },
+        {
+            "unique-id": "service-b",
+            "node-type": "service",
+            "name": "B",
+            "description": "Service B"
+        },
+        {
+            "unique-id": "service-c",
+            "node-type": "service",
+            "name": "C",
+            "description": "Service C"
+        }
+    ],
+    "relationships": [
+        {
+            "unique-id": "service-a-to-service-b",
+            "description": "Connects to",
+            "protocol": "invalid-value",
+            "relationship-type": {
+                "connects": {
+                    "source": {
+                        "node": "service-a"
+                    },
+                    "destination": {
+                        "node": "service-b"
+                    }
+                }
+            }
+        },
+        {
+            "unique-id": "service-a-to-service-c",
+            "description": "Connects to",
+            "relationship-type": {
+                "connects": {
+                    "source": {
+                        "node": "service-a"
+                    },
+                    "destination": {
+                        "node": "service-c"
+                    }
+                }
+            }
+        }
+    ]
+}
