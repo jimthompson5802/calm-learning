@@ -15,6 +15,12 @@
             "node-type": "service",
             "name": "B",
             "description": "Service B"
+        },
+        {
+            "unique-id": "service-c",
+            "node-type": "service",
+            "name": "C",
+            "description": "Service C"
         }
     ],
     "relationships": [
@@ -29,6 +35,20 @@
                     },
                     "destination": {
                         "node": "service-b"
+                    }
+                }
+            }
+        },
+        {
+            "unique-id": "service-a-to-service-c",
+            "description": "Connects to",
+            "relationship-type": {
+                "connects": {
+                    "source": {
+                        "node": "service-a"
+                    },
+                    "destination": {
+                        "node": "service-c"
                     }
                 }
             }
